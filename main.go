@@ -19,11 +19,10 @@ func main() {
 }
 
 func getAddress() string {
-	host := "localhost" // Replace with your desired host
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080" // Default port if not set
 	}
 	// Additional logic to normalize host and port if needed
-	return fmt.Sprintf("%s:%s", host, port)
+	return ":" + port // Add colon before the port number
 }
