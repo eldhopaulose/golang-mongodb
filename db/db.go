@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -15,11 +14,6 @@ var collection *mongo.Collection
 
 func init() {
 	// Connect to MongoDB
-
-	err := godotenv.Load("/etc/secrets/") // Update the file path to load the .env file on the server
-	if err != nil {
-		log.Fatal("Error loading .env file:", err)
-	}
 
 	dbLink := os.Getenv("MONG_URI")
 	if dbLink == "" {
