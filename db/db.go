@@ -16,7 +16,7 @@ var collection *mongo.Collection
 func init() {
 	// Connect to MongoDB
 
-	err := godotenv.Load() // Update the file path to load the .env file on the server
+	err := godotenv.Load("/path/to/.env") // Update the file path to load the .env file
 	if err != nil {
 		log.Fatal("Error loading .env file:", err)
 	}
