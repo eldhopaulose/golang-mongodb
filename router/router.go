@@ -7,9 +7,11 @@ import (
 
 func Router() *mux.Router {
 	router := mux.NewRouter()
+	s := router.PathPrefix("/api").Subrouter() //Base Path
 
-	router.HandleFunc("/api/user", controllers.CreateUserHandler).Methods("POST")
-	router.HandleFunc("/api/user/all", controllers.GetUserHandler).Methods("GET")
+	s.HandleFunc("/user", controllers.CreateUserHandler).Methods("POST")
+	s.HandleFunc("/user/all", controllers.GetUserHandler).Methods("GET")
+	s.HandleFunc("/user/single/{id}", controllers.GetUserByIDHandler).Methods("GET")
 
 	return router
 }

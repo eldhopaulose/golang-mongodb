@@ -9,6 +9,7 @@ import (
 
 	"github.com/eldhopaulose/mongo-golang/db"
 	"github.com/eldhopaulose/mongo-golang/models"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -96,6 +97,54 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := Response{
 		Data: convertedUsers,
+	}
+
+	json.NewEncoder(w).Encode(response)
+}
+
+// GetUserByID gets a user by ID
+func GetUserByID(id string) (models.User, error) {
+	collection := db.GetCollection()
+
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return models.User{}, fmt.Errorf("error converting id to objectID: %v", err)
+	}
+
+	var user models.User
+	err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&user)
+	if err != nil {
+		return models.User{}, fmt.Errorf("error getting user: %v", err)
+	}
+
+	return user, nil
+}
+
+// GetUserByIDHandler gets a user by ID
+func GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	params := mux.Vars(r)
+
+	id := params["id"]
+
+	if id == "" {
+		http.Error(w, "id parameter is required", http.StatusBadRequest)
+		return
+	}
+
+	user, err := GetUserByID(id)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error getting user: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	response := struct {
+		models.User
+		ID interface{} `json:"id"`
+	}{
+		User: user,
+		ID:   user.ID,
 	}
 
 	json.NewEncoder(w).Encode(response)
